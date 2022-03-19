@@ -51,7 +51,7 @@ DARER/pre-trained language model/
 We recommend you search the hyper-parameters on your service to obtain the best performances in your own experiment environment.
 
 ## Citation
-If you use our source code in this repo in your work, please cite the following paper. 
+If you use our source code in this repo in your work, please cite our spaper. 
 The bibtex are listed below:
 
 <pre>
