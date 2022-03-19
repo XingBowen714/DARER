@@ -25,6 +25,7 @@ Our code relies on Python 3.6 and following libraries:
 
 ## Run: 
 LSTM-based Encoder:
+
 DARER/
 ``` shell script
     # Mastodon //glove
@@ -37,6 +38,7 @@ DARER/
 
 ```
 PTLM(pre-trained language model)-based Encoder:
+
 DARER/pre-trained language model/
 ``` shell script
     # Mastodon // BERT
