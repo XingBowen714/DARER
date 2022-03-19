@@ -10,7 +10,7 @@ for Joint Dialog Sentiment Classification and Act Recognition](https://arxiv.org
 
 DARER's Architecture:
 
-<img src="img/model.pdf">
+<img src="img/model.png">
 
 
 ## Requirements
