@@ -1,6 +1,6 @@
 # DARER
 This repository contains the PyTorch source Code for our paper: **[DARER: Dual-task Temporal Relational Recurrent Reasoning Network
-for Joint Dialog Sentiment Classification and Act Recognition](https://arxiv.org/abs/2203.03856)**.
+for Joint Dialog Sentiment Classification and Act Recognition](https://arxiv.org/abs/2203.03856)**.\\
 **[Bowen Xing](https://scholar.google.com/citations?hl=zh-CN&user=DpBvmGQAAAAJ)** and **[Ivor W. Tsang](https://scholar.google.com/citations?user=rJMOlVsAAAAJ&hl=zh-CN)**.
 
 ***ACL 2022 (Findings)***.
