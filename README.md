@@ -43,7 +43,7 @@ Our code relies on Python 3.6 and following libraries:
     # Mastodon // XLNet
     python -u main.py -pm bert -bs 12 -sn 4 -dr 0.2 -hd 256 -l2 0.0 -blr 1e-05 -mc 1
 ```
-We recommend you search the hypter-parameters on your service to obtain the best performances in your own experiment envronment.
+We recommend you search the hyper-parameters on your service to obtain the best performances in your own experiment environment.
 
 ## Citation
 If you use our source code in this repo in your work, please cite the following paper. 
