@@ -23,7 +23,8 @@ Our code relies on Python 3.6 and following libraries:
 - numpy==1.19.2
 - scikit-learn==0.24.2
 
-## Run: // LSTM-based Encoder  
+## Run: 
+LSTM-based Encoder  
 ``` shell script
     # Mastodon //glove
     python -u main.py -lr 1e-3 -l2 1e-8 -dd dataset/mastodon -hd 128 -mc 2 -dr 0.2 -sn 3
