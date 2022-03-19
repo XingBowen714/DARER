@@ -35,7 +35,7 @@ LSTM-based Encoder
     python -u main.py -ne 50 -hd 256 -lr 1e-3 -l2 1e-8 -dd dataset/dailydialogue -sn 1 -mc 1e-05 -dr 0.3 -rw
 
 ```
-PTLM(pre-trained language model)-based Encoder // in "pre-trained language model" repository
+PTLM(pre-trained language model)-based Encoder //       in "pre-trained language model" repository
 ``` shell script
     # Mastodon // BERT
     python -u main.py -pm bert -bs 16 -sn 4 -dr 0.3 -hd 768 -l2 0.01 -blr 1e-05 -mc 1
