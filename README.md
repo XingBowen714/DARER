@@ -24,7 +24,8 @@ Our code relies on Python 3.6 and following libraries:
 - scikit-learn==0.24.2
 
 ## Run: 
-LSTM-based Encoder  // in DARER/ repository
+LSTM-based Encoder:
+DARER/
 ``` shell script
     # Mastodon //glove
     python -u main.py -lr 1e-3 -l2 1e-8 -dd dataset/mastodon -hd 128 -mc 2 -dr 0.2 -sn 3
@@ -35,7 +36,8 @@ LSTM-based Encoder  // in DARER/ repository
     python -u main.py -ne 50 -hd 256 -lr 1e-3 -l2 1e-8 -dd dataset/dailydialogue -sn 1 -mc 1e-05 -dr 0.3 -rw
 
 ```
-PTLM(pre-trained language model)-based Encoder //       in DARER/pre-trained language model/ repository
+PTLM(pre-trained language model)-based Encoder:
+DARER/pre-trained language model/
 ``` shell script
     # Mastodon // BERT
     python -u main.py -pm bert -bs 16 -sn 4 -dr 0.3 -hd 768 -l2 0.01 -blr 1e-05 -mc 1
