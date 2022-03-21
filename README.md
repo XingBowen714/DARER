@@ -17,7 +17,7 @@ DARER's Architecture:
 Our code relies on Python 3.6 and following libraries:
 - transformers==1.1.0
 - torch-geometric==1.7.0
-- torch-geometric==1.5.0
+- torch==1.5.0
 - tqdm==4.60.0
 - transformers==3.3.1
 - numpy==1.19.2
