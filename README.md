@@ -54,10 +54,17 @@ We recommend you search the optimal hyper-parameters on your server to obtain th
 If the code is used in your research, please star this repo ^_^ and cite our paper as follows:
 
 <pre>
-@article{xing2022darer,
-  title={DARER: Dual-task Temporal Relational Recurrent Reasoning Network for Joint Dialog Sentiment Classification and Act Recognition},
-  author={Xing, Bowen and Tsang, Ivor W},
-  journal={arXiv preprint arXiv:2203.03856},
-  year={2022}
+@inproceedings{xing-tsang-2022-darer,
+    title = "{DARER}: Dual-task Temporal Relational Recurrent Reasoning Network for Joint Dialog Sentiment Classification and Act Recognition",
+    author = "Xing, Bowen  and
+      Tsang, Ivor",
+    booktitle = "Findings of the Association for Computational Linguistics: ACL 2022",
+    month = may,
+    year = "2022",
+    address = "Dublin, Ireland",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2022.findings-acl.286",
+    doi = "10.18653/v1/2022.findings-acl.286",
+    pages = "3611--3621",
 }
 </pre>
