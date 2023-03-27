@@ -13,9 +13,17 @@ from transformers import AdamW
 
 from sklearn.metrics import confusion_matrix
 
-def _save_confusion_matrix():
+def _save_confusion_matrix(sent_matrix, act_matrix):
 
-    ...
+    # For the emotions/sentiment
+    with open('sent_matrix.pickle', 'wb') as handle:
+        pickle.dump(sent_matrix, handle, protocol=pickle.HIGHEST_PROTOCOL)
+    
+    # For the dialog act
+    with open('act_matrix.pickle', 'wb') as handle:
+        pickle.dump(act_matrix, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+    return None
 
 
 def training(model, data_iter, max_grad=10.0, lr=1e-3, l2=1e-8, bert_lr=1e-5, pretrained_model="none"):
