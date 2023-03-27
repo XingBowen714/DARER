@@ -1,13 +1,21 @@
 import time
+import torch
+import pickle
+
 from tqdm import tqdm
 
-import torch
 from torch.optim import Adam
 
 from utils.help import NormalMetric, ReferMetric
 from utils.help import iterable_support, expand_list
 
 from transformers import AdamW
+
+from sklearn.metrics import confusion_matrix
+
+def _save_confusion_matrix():
+
+    ...
 
 
 def training(model, data_iter, max_grad=10.0, lr=1e-3, l2=1e-8, bert_lr=1e-5, pretrained_model="none"):
@@ -71,6 +79,15 @@ def evaluate(model, data_iter, normal_metric):
 
     sent_f1, sent_r, sent_p = reference.validate_emot(pred_sent, gold_sent)
     act_f1, act_r, act_p = reference.validate_act(pred_act, gold_act)
+
+    # Get the confusion matrix
+    act_matrix = confusion_matrix(gold_act, pred_act)
+    sent_matrix = confusion_matrix(gold_sent, pred_sent)
+
+    print("\n\n")
+    print(act_matrix)
+    print(sent_matrix)
+    exit()
 
     time_con = time.time() - time_start
     return sent_f1, sent_r, sent_p, act_f1, act_r, act_p, time_con
