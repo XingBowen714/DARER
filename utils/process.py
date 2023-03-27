@@ -91,11 +91,9 @@ def evaluate(model, data_iter, normal_metric):
     # Get the confusion matrix
     act_matrix = confusion_matrix(gold_act, pred_act)
     sent_matrix = confusion_matrix(gold_sent, pred_sent)
-
-    print("\n\n")
-    print(act_matrix)
-    print(sent_matrix)
-    exit()
+    
+    # Save the confusion matrix
+    _save_confusion_matrix (sent_matrix, act_matrix)
 
     time_con = time.time() - time_start
     return sent_f1, sent_r, sent_p, act_f1, act_r, act_p, time_con
