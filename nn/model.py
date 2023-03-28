@@ -77,7 +77,7 @@ class TaggingAgent(nn.Module):
             self._decoder = LinearDecoder(len(sent_vocab), len(act_vocab), hidden_dim)
         
         else:
-            
+
             self._decoder = RelationDecoder(
                 len(sent_vocab), len(act_vocab), hidden_dim,
                 num_layer, dropout_rate, rgcn_num_base, stack_num
@@ -257,21 +257,28 @@ class TaggingAgent(nn.Module):
 
 
     def predict(self, utt_list, adj_list, adj_full_list, adj_id_list):
+        
         var_utt, var_p, mask, len_list, _, var_adj, var_adj_full, pad_adj_full_list, pad_adj_R_list = \
             self._wrap_padding(utt_list, adj_list, adj_full_list, adj_id_list, False)
+        
         if self._pretrained_model != "none":
+            
             pred_sents, pred_acts, sent_hids, act_hids = self.forward(var_p, len_list, var_adj, pad_adj_full_list, pad_adj_R_list, mask)
         else:
+
             pred_sents, pred_acts, sent_hids, act_hids = self.forward(var_utt, len_list, var_adj, pad_adj_full_list, pad_adj_R_list, None)
+        
         pred_sent, pred_act = pred_sents[-1], pred_acts[-1]
         flat_sent_hiddens = []
-       # for j in range(len(sent_hids)):
+       #
+       #  for j in range(len(sent_hids)):
        #    flat_sent_hidden = torch.cat([sent_hids[j][i, :trim_list[i], :] for i in range(0, len(trim_list))], dim=0)
         #    flat_sent_hiddens.append(flat_sent_hidden)
 
         #print([p.size() for p in sent_hids])
         #assert 3==0
         trim_list = [len(l) for l in len_list]
+        
         flat_sent = torch.cat(
             [pred_sent[i, :trim_list[i], :] for
              i in range(0, len(trim_list))], dim=0
@@ -299,6 +306,7 @@ class TaggingAgent(nn.Module):
         return string_sent, string_act, flat_sent_hiddens
 
     def measure(self, utt_list, sent_list, act_list, adj_list, adj_full_list, adj_id_list):
+        
         var_utt, var_p, mask, len_list, _, var_adj, var_adj_full, pad_adj_full_list, pad_adj_R_list = \
             self._wrap_padding(utt_list, adj_list, adj_full_list, adj_id_list,True)
 
@@ -312,31 +320,42 @@ class TaggingAgent(nn.Module):
         index_sent = expand_list(flat_sent)
         index_act = expand_list(flat_act)
 
+        # Convert to Tensors and mount to CUDA
         var_sent = torch.LongTensor(index_sent)
         var_act = torch.LongTensor(index_act)
+        
         if torch.cuda.is_available():
             var_sent = var_sent.cuda()
             var_act = var_act.cuda()
 
+        # Get the logits
         if self._pretrained_model != "none":
+            
             pred_sents, pred_acts, _, _ = self.forward(var_p, len_list, var_adj, pad_adj_full_list, pad_adj_R_list, mask)
+        
         else:
+            
             pred_sents, pred_acts, _, _ = self.forward(var_utt, len_list, var_adj, pad_adj_full_list, pad_adj_R_list, None)
+        
         trim_list = [len(l) for l in len_list]
         
+        # Calculate the loss
         sent_loss = 0.0
         act_loss = 0.0
         sent_margin_loss = 0.0
         act_margin_loss = 0.0
 
         flat_preds_s, flat_preds_a = [], []
+
         #cross entropy loss
         for j in range(len(pred_sents)):
+            
             flat_pred_s = torch.cat([pred_sents[j][i, :trim_list[i], :] for i in range(0, len(trim_list))], dim=0)
             flat_pred_a = torch.cat([pred_acts[j][i, :trim_list[i], :] for i in range(0, len(trim_list))], dim=0)
             
             flat_preds_s.append(flat_pred_s)
             flat_preds_a.append(flat_pred_a)
+            
             sent_loss_item = self._criterion(F.log_softmax(flat_pred_s, dim=-1), var_sent)
             act_loss_item = self._criterion(F.log_softmax(flat_pred_a, dim=-1), var_act)
 
@@ -345,10 +364,13 @@ class TaggingAgent(nn.Module):
         
         #flat_preds_s = flat_preds_s[:-1]
         #flat_preds_a = flat_preds_a[:-1]
+
         #margin loss
         for j in range(1, len(flat_preds_s)):
+            
             sent_margin_loss_item = torch.sum(torch.index_select(F.relu(F.log_softmax(flat_preds_s[j-1], dim = -1) \
                 - F.log_softmax(flat_preds_s[j],dim = -1)), 1, var_sent))
+            
             act_margin_loss_item = torch.sum(torch.index_select(F.relu(F.log_softmax(flat_preds_a[j-1], dim = -1) \
                 - F.log_softmax(flat_preds_a[j], dim = -1)), 1, var_act))
 
@@ -356,5 +378,6 @@ class TaggingAgent(nn.Module):
             act_margin_loss = act_margin_loss + act_margin_loss_item
        
         loss_sum = sent_loss + self.lbda * sent_margin_loss + act_loss + self.lbda * act_margin_loss
-        #print(sent_loss, sent_margin_loss, act_loss, act_margin_loss, loss_sum)
+        #
+        # print(sent_loss, sent_margin_loss, act_loss, act_margin_loss, loss_sum)
         return loss_sum

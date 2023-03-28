@@ -312,3 +312,4 @@ class LinearDecoder(nn.Module):
 
     def forward(self, input_h, len_list, adj_re):
         return self._sent_linear(input_h), self._act_linear(input_h)
+    
