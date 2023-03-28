@@ -52,25 +52,32 @@ class TaggingAgent(nn.Module):
         self.lbda = margin_coefficient        
         
         if not random_wordvec:
+
             if 'mastodon' in data_dir:
                 ds_n = 'mastodon'
             if 'daily' in data_dir:
                 ds_n = 'dailydialog'
+            
             embedding_matrix = build_embedding_matrix(
                     word2idx=self._word_vocab._elem_to_idx,
                     embed_dim= 300,
                     dat_fname='{0}_{1}_embedding_matrix.dat'.format(str(300), ds_n))
+            
             word_embedding_matrix = nn.Embedding.from_pretrained(torch.tensor(embedding_matrix, dtype=torch.float), freeze = False)
 
         else:
             word_embedding_matrix = nn.Embedding(len(word_vocab), embedding_dim)
+        
         self._encoder = BiGraphEncoder(
             word_embedding_matrix,
             hidden_dim, dropout_rate, pretrained_model, rgcn_num_base
         )
+        
         if use_linear_decoder:
             self._decoder = LinearDecoder(len(sent_vocab), len(act_vocab), hidden_dim)
+        
         else:
+            
             self._decoder = RelationDecoder(
                 len(sent_vocab), len(act_vocab), hidden_dim,
                 num_layer, dropout_rate, rgcn_num_base, stack_num
