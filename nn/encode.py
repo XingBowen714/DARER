@@ -35,14 +35,13 @@ class BiGraphEncoder(nn.Module):
     def extract_utterances(self, input_w, mask):
 
         hidden_w = None
-        
+
         if self._pretrained_model != "none":
             hidden_w = self._utt_encoder(input_w, mask)
         else:
             hidden_w = self._utt_encoder(input_w)
         
         return hidden_w
-        ...
 
     def forward(self, input_w, adj, pad_adj_full_list, mask=None):
         
