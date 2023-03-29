@@ -100,6 +100,10 @@ class TaggingAgent(nn.Module):
     def extract_utterances_features(self, input_w, mask=None):
         encode_h = self._encoder.extract_utterances(input_w, mask)
         return encode_h
+    
+    def extract_speaker_features(self, pad_adj_full_list):
+        features = self._encoder(encode_h, pad_adj_full_list)
+        return features
 
     def forward(self, input_h, len_list, adj, pad_adj_full_list, pad_adj_R_list, mask=None):
         encode_h = self._encoder(input_h, adj, pad_adj_full_list, mask)
