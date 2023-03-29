@@ -32,6 +32,18 @@ class BiGraphEncoder(nn.Module):
     def add_missing_arg(self, pretrained_model):
         self._pretrained_model = pretrained_model
 
+    def extract_utterances(self, input_w, mask):
+
+        hidden_w = None
+        
+        if self._pretrained_model != "none":
+            hidden_w = self._utt_encoder(input_w, mask)
+        else:
+            hidden_w = self._utt_encoder(input_w)
+        
+        return hidden_w
+        ...
+
     def forward(self, input_w, adj, pad_adj_full_list, mask=None):
         
         if self._pretrained_model != "none":
@@ -66,6 +78,7 @@ class BiRNNEncoder(nn.Module):
 
         hidden_list, batch_size = [], input_w.size(0)
         for index in range(0, batch_size):
+
             batch_w = dropout_w[index]
             encode_h, _ = self._rnn_cell(batch_w)
 
@@ -105,6 +118,7 @@ class RGCN(nn.Module):
 
         if rgcn_num_bases > 0:
             self.RGCN = RGCNConv(hidden_dim, hidden_dim, self.num_relations, num_bases = rgcn_num_bases)
+        
         else:
             self.RGCN = RGCNConv(hidden_dim, hidden_dim, self.num_relations)
    

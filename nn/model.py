@@ -13,6 +13,7 @@ from utils.load import WordAlphabet, LabelAlphabet
 from utils.help import expand_list, noise_augment
 from utils.help import nest_list, iterable_support
 from utils.load import build_embedding_matrix
+
 import copy
 
 class TaggingAgent(nn.Module):
@@ -193,7 +194,6 @@ class TaggingAgent(nn.Module):
 
         assert len(pad_adj_id_list[0]) * 2 == len(pad_adj_R_list[0]), pad_adj_R_list[0]
  
-
         pad_w_list, pad_sign = [], self._word_vocab.PAD_SIGN
         for dial_i in range(0, len(dial_list)):
             pad_w_list.append([])
@@ -283,6 +283,7 @@ class TaggingAgent(nn.Module):
             [pred_sent[i, :trim_list[i], :] for
              i in range(0, len(trim_list))], dim=0
         )
+        
         flat_act = torch.cat(
             [pred_act[i, :trim_list[i], :] for
              i in range(0, len(trim_list))], dim=0
