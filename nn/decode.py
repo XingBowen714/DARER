@@ -15,6 +15,7 @@ class RelationDecoder(nn.Module):
                  stack_num: int
                  ):
         super(RelationDecoder, self).__init__()
+        
         self._num_layer = num_layer
    
         self.stack_num = stack_num
@@ -28,8 +29,10 @@ class RelationDecoder(nn.Module):
         self._act_layer_dict.add_module(
                 str(0), BiLSTMLayer(hidden_dim, dropout_rate)
             )
+        
         # After each calculation, the specified layer will be passed
         for layer_i in range(1, num_layer):
+            
             self._sent_layer_dict.add_module(
                 str(layer_i), BiLSTMLayer(hidden_dim, dropout_rate)
             )
@@ -39,16 +42,19 @@ class RelationDecoder(nn.Module):
         
         self.hidden_dim = hidden_dim
         self.relation_type_to_idx = {}
+
         task1_id = [0,1] #0 denotes 'SC', 1 denotes 'AR'
         task2_id = [0,1]
 
         position_relations = [-1, 0, 1] 
         # respectively denote 'previous', 'current', 'future'
         # respectively denote 'past ones','previous one', 'current', 'next one', 'future ones'
+       
         for j in task1_id:
             for k in task2_id:
                 for m in position_relations:
                     self.relation_type_to_idx[str(j) + str(k) + str(m)] = len(self.relation_type_to_idx)
+        
         self.relation_type_to_idx['pad'] = len(self.relation_type_to_idx)
         self.num_relations = len(self.relation_type_to_idx)
 
@@ -71,10 +77,10 @@ class RelationDecoder(nn.Module):
     # Add for loading best model
     def add_missing_arg(self, layer=2):
         self._relate_layer.add_missing_arg(layer)
-    
 
 
     def batch_graphify(self,features, pad_adj_R_list):
+        
         node_features, edge_index, edge_norm, edge_type = [], [], [], []
         batch_size = features.size(0)
         length_sum = 0
@@ -86,6 +92,7 @@ class RelationDecoder(nn.Module):
         #atts = self.edgeatt(features, features, mask)
 
         for j in range(batch_size):
+            
             cur_len = features.size(1)
             assert len(pad_adj_R_list[j]) == cur_len
             node_features.append(features[j])
@@ -96,20 +103,25 @@ class RelationDecoder(nn.Module):
             
             
             for item, item_rec in zip(perms, perms_rec):
+                
                 edge_index.append(torch.tensor([item_rec[0], item_rec[1]]))
                 #edge_norm.append(edge_weights[j][item[0], item[1]])
                 #edge_norm.append(atts[j][item[0], item[1]])
+                
                 if not pad_adj_R_list[j][item[0]][item[1]]:
                     edge_type.append(self.relation_type_to_idx['pad'])
                     continue
+                
                 if item[0] < cur_len / 2:
                     task1 = '0'
                 else:
                     task1 = '1'
+                
                 if item[1] < cur_len / 2:
                     task2 = '0'
                 else:
                     task2 = '1'
+                
                 if item[0]%(cur_len/2) > item[1]%(cur_len/2):
                     position = '-1'
                 elif item[0]%(cur_len/2) == item[1]%(cur_len/2):
@@ -139,19 +151,25 @@ class RelationDecoder(nn.Module):
         Method to construct the edges of a graph (a utterance) considering the past and future window.
         return: list of tuples. tuple -> (vertice(int), neighbor(int))
         """
+       
         all_perms = set()
+       
         for i in range(len(pad_adj_R_list_item)):
             perms = set()
+            
             for j in range(len(pad_adj_R_list_item[i])):
                 if pad_adj_R_list_item[i][j]:
                     perms.add((i,j))
                 elif i==j:
                     perms.add((i,j))
+            
             all_perms = all_perms.union(perms)
+       
         return list(all_perms)
     
 
     def forward(self, input_h, len_list, pad_adj_R_list):
+        
         sent_h = self._sent_layer_dict["0"](input_h)
         act_h = self._act_layer_dict["0"](input_h)
 
@@ -163,6 +181,7 @@ class RelationDecoder(nn.Module):
 
         sent_logits, act_logits = [], []
         sent_hiddens, act_hiddens = [], [] 
+        
         #residual connection and predict
         linear_s = self._sent_linear(sent_h + input_h)
         linear_a = self._act_linear(act_h + input_h)
@@ -179,7 +198,9 @@ class RelationDecoder(nn.Module):
         
         
         for i in range(self.stack_num):
+           
             res_s, res_a = sent_h, act_h
+           
             #label embeddings
             senti_lemb = torch.matmul(p_senti, self.senti_labelembedding)
             act_lemb = torch.matmul(p_act, self.act_labelembedding)
@@ -202,8 +223,8 @@ class RelationDecoder(nn.Module):
             linear_s = self._sent_linear(sent_h + input_h)
             linear_a = self._act_linear(act_h + input_h)
             
-            p_senti=F.softmax(linear_s, dim = -1)
-            p_act=F.softmax(linear_a, dim = -1)
+            p_senti = F.softmax(linear_s, dim = -1)
+            p_act = F.softmax(linear_a, dim = -1)
             
             #record logits history for loss calculation
             sent_logits.append(linear_s)
@@ -212,9 +233,6 @@ class RelationDecoder(nn.Module):
             act_hiddens.append(act_h)
         
         return sent_logits, act_logits, sent_hiddens, act_hiddens
-
-
-
 
 class ScaledDotProductAttention(nn.Module):
     ''' Scaled Dot-Product Attention '''
@@ -226,9 +244,11 @@ class ScaledDotProductAttention(nn.Module):
         #self.dropout = nn.Dropout(attn_dropout)
         self.q_l = nn.Linear(hidden_dim, hidden_dim)
         self.k_l = nn.Linear(hidden_dim, hidden_dim)
+
     def forward(self, q, k, mask=None):
 
         attn = torch.matmul(self.q_l(q) / self.temperature, self.k_l(k).transpose(1, 2))
+        
         #print(attn.size(), mask.size())
         if mask is not None:
             attn = attn.masked_fill(mask == 0, -1e9)
@@ -247,6 +267,7 @@ class UniLSTMLayer(nn.Module):
             hidden_dim, hidden_size=hidden_dim,
             batch_first=True, bidirectional=False
         )
+        
         self._drop_layer = nn.Dropout(dropout_rate)
 
     def forward(self, input_h):
@@ -291,3 +312,4 @@ class LinearDecoder(nn.Module):
 
     def forward(self, input_h, len_list, adj_re):
         return self._sent_linear(input_h), self._act_linear(input_h)
+    
