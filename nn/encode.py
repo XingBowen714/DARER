@@ -216,12 +216,17 @@ class UtterancePretrainedModel(nn.Module):
         cls_list = []
 
         for idx in range(0, input_p.size(0)):
+            cls_tensor = None
+            op2 = None
+
             if self._pretrained_model == "electra":
-                cls_tensor = self._encoder(input_p[idx], attention_mask=mask[idx])[0]
+                output = self._encoder(input_p[idx], attention_mask=mask[idx])[0]
             else:
-                cls_tensor, op2 = self._encoder(input_p[idx], attention_mask=mask[idx])
+                output = self._encoder(input_p[idx], attention_mask=mask[idx])
         #    print(cls_tensor, op2)
-            cls_tensor = cls_tensor[:, 0, :]
+   
+            cls_tensor = output.pooler_output
             linear_out = self._linear(cls_tensor.unsqueeze(0))
             cls_list.append(linear_out)
+
         return torch.cat(cls_list, dim=0)
