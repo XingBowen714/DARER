@@ -48,7 +48,9 @@ class TaggingAgent(nn.Module):
         self._adj_full_vocab = adj_full_vocab
         self._adj_id_vocab = adj_id_vocab
 
-        self.lbda = margin_coefficient        
+        self.lbda = margin_coefficient
+
+        print("Before building word vectors")        
         
         if not random_wordvec:
             if 'mastodon' in data_dir:

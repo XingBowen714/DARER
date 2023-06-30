@@ -144,6 +144,7 @@ class DataHub(object):
         return data_loader
 
 def load_word_vec(path, word2idx=None, embed_dim=300):
+    path = 'downloads/glove.840B.300d.txt'
     fin = open(path, 'r', encoding='utf-8', newline='\n', errors='ignore')
     word_vec = {}
     for line in tqdm(fin,ncols = 100):
@@ -155,13 +156,18 @@ def load_word_vec(path, word2idx=None, embed_dim=300):
 
 
 def build_embedding_matrix(word2idx, embed_dim, dat_fname):
+
     if os.path.exists(dat_fname):
+        
         print('loading embedding_matrix:', dat_fname)
         embedding_matrix = pickle.load(open(dat_fname, 'rb'))
+    
     else:
+
         print('loading word vectors...')
         embedding_matrix = np.zeros((len(word2idx) + 2, embed_dim))  # idx 0 and len(word2idx)+1 are all-zeros
-        fname = '/home/bxing/Data/supports/glove.840B.300d.txt'
+        fname = 'downloads/glove.840B.300d.txt'
+        print(fname)
         word_vec = load_word_vec(fname, word2idx=word2idx, embed_dim=embed_dim)
         print('building embedding_matrix:', dat_fname)
         for word, i in word2idx.items():
@@ -170,6 +176,7 @@ def build_embedding_matrix(word2idx, embed_dim, dat_fname):
                 # words not found in embedding index will be all-zeros.
                 embedding_matrix[i] = vec
         pickle.dump(embedding_matrix, open(dat_fname, 'wb'))
+
     return embedding_matrix
 
 class _GeneralDataSet(Dataset):
